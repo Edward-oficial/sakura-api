@@ -1,17 +1,13 @@
 const axios = require('axios');
 
-// TODO: Configura tu HCAPTCHA_SECRET en .env
-// const HCAPTCHA_SECRET = process.env.HCAPTCHA_SECRET || '';
-const HCAPTCHA_SECRET = 'ES_0cf00826876f4e40abd1c276f295b507'; // Reemplaza con tu clave real
-
 async function verifyCaptcha(token) {
-    if (!token || !HCAPTCHA_SECRET) return false;
+    if (!token) return false;
 
     try {
         const { data } = await axios.post(
             'https://hcaptcha.com/siteverify',
             new URLSearchParams({
-                secret: HCAPTCHA_SECRET,
+                secret: process.env.HCAPTCHA_SECRET,
                 response: token
             })
         );
