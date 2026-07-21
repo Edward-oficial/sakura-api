@@ -70,10 +70,8 @@ function copyApiKey(){
 }
 
 function logout(){
-    localStorage.removeItem("token");
     localStorage.removeItem("apiKey");
-
-    window.location.href = "/login";
+    window.location.href = "/logout";
 }
 
 function toast(){
