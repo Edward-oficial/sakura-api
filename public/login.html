@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login • Sakura API</title>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
+
 <body>
 
 <header class="topbar">
@@ -24,26 +27,41 @@
 <a href="/ejemplo" class="menu-link">Ejemplo</a>
 
 <div class="sidemenu-title" style="margin-top:20px;">Cuenta</div>
+<a href="/login" class="menu-link active">Login</a>
 <a href="/register" class="menu-link">Registro</a>
 </nav>
 
 <div class="container">
 
 <h2>Iniciar sesión</h2>
-<p class="subtitle">Entra con tu cuenta</p>
+<p class="subtitle" style="margin-bottom:20px;text-align:left;">Entra con tu cuenta</p>
 
 <div class="card">
-<form id="loginForm">
-<input type="text" id="username" placeholder="Usuario" required>
-<input type="password" id="password" placeholder="Contraseña" required>
-<!-- Captcha placeholder -->
-<button type="submit">Entrar</button>
-</form>
+
+<input id="username" placeholder="Usuario">
+<input id="password" type="password" placeholder="Contraseña">
+
+<div class="h-captcha" data-sitekey="1778e6c4-71da-4594-afe0-ba5643ce74a4"></div>
+
+<div class="buttons" style="margin-top:15px;">
+<button class="test" onclick="doLogin()">
+Entrar
+</button>
 </div>
 
-<p id="result"></p>
+</div>
 
-<p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
+<div class="result">
+
+<pre id="json">
+Aquí aparecerá el resultado...
+</pre>
+
+</div>
+
+<p class="subtitle" style="text-align:left;">
+¿No tienes cuenta? <a href="/register" style="color:#dcb567;">Regístrate</a>
+</p>
 
 </div>
 
@@ -52,6 +70,65 @@ Copiado al portapapeles
 </div>
 
 <script src="/js/app.js"></script>
+<script>
+
+async function doLogin(){
+
+const username = document.getElementById("username").value.trim();
+const password = document.getElementById("password").value;
+const json = document.getElementById("json");
+
+let captchaToken;
+try{
+    captchaToken = hcaptcha.getResponse();
+}catch(err){
+    json.textContent = "El captcha no cargó bien. Revisa el site key configurado.";
+    return;
+}
+
+if(!username || !password){
+    json.textContent = "Escribe usuario y contraseña.";
+    return;
+}
+
+if(!captchaToken){
+    json.textContent = "Completa el captcha.";
+    return;
+}
+
+json.textContent = "Enviando...";
+
+try{
+
+    const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, captchaToken })
+    });
+
+    const data = await res.json();
+
+    json.textContent = JSON.stringify(data, null, 2);
+
+    if(data.status && data.apiKey){
+        localStorage.setItem("apiKey", data.apiKey);
+    }
+
+    hcaptcha.reset();
+
+    if(data.status){
+        window.location.href = "/";
+    }
+
+}catch(err){
+
+    json.textContent = "Error al iniciar sesión: " + (err && err.message ? err.message : err);
+
+}
+
+}
+
+</script>
 
 </body>
 </html>
