@@ -1,3 +1,23 @@
+/* =========================================================
+   Sakura API — tema "Kintsugi"
+   Papel envejecido + tinta oscura + oro de reparación (kintsugi),
+   con un acento sakura muy comedido. Nada de neón, nada de morado-rosa
+   de plantilla genérica.
+
+   Paleta:
+   --bg        #1b1420  fondo general (ciruela casi negro, no negro puro)
+   --bg-alt    #241a29  paneles oscuros (topbar, sidebar, info boxes)
+   --paper     #f3e8d7  superficie "papel" de las tarjetas
+   --paper-2   #e7d8bf  inputs sobre papel (un tono más oscuro)
+   --ink       #2a1f26  texto sobre papel
+   --text      #ece1d2  texto claro sobre fondo oscuro
+   --muted     #9c8fae  texto secundario sobre fondo oscuro
+   --muted-2   #7c6a55  texto secundario sobre papel
+   --gold      #c69a4a  oro kintsugi (acento de firma)
+   --gold-dim  #8a6c37  oro apagado (bordes)
+   --sakura    #cf8298  rosa sakura, solo para estados activos
+   ========================================================= */
+
 *{
 margin:0;
 padding:0;
@@ -5,9 +25,9 @@ box-sizing:border-box;
 }
 
 body{
-font-family:'Space Grotesk',sans-serif;
-background:#0b0b0f;
-color:#fff;
+font-family:'Zen Kaku Gothic New','Hiragino Sans',sans-serif;
+background:#1b1420;
+color:#ece1d2;
 padding-bottom:40px;
 }
 
@@ -18,23 +38,40 @@ padding:20px;
 }
 
 h1{
-font-size:40px;
+font-family:'Shippori Mincho',serif;
+font-size:38px;
+font-weight:600;
 text-align:center;
-background:linear-gradient(90deg,#ff9ecb,#9d4dff);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+color:#dcb567;
+letter-spacing:.5px;
+position:relative;
+padding-bottom:22px;
+}
+
+/* Firma: una costura dorada, como una grieta de kintsugi reparada */
+h1::after{
+content:"";
+display:block;
+width:120px;
+height:2px;
+margin:16px auto 0;
+background:linear-gradient(90deg,transparent,#c69a4a 20%,#c69a4a 45%,#c69a4a 55%,#c69a4a 80%,transparent);
 }
 
 h2{
-font-size:26px;
+font-family:'Shippori Mincho',serif;
+font-size:24px;
+font-weight:600;
 margin-bottom:6px;
+color:#e9d9b8;
 }
 
 .subtitle{
 text-align:center;
-color:#9b9b9b;
+color:#9c8fae;
 margin-top:8px;
 margin-bottom:25px;
+font-size:14px;
 }
 
 .info{
@@ -48,64 +85,113 @@ margin-bottom:25px;
 .box{
 flex:1;
 min-width:150px;
-background:#15151d;
+background:#241a29;
 padding:15px;
-border-radius:14px;
+border-radius:10px;
 text-align:center;
+border:1px solid #382a3f;
 }
 
 .box h3{
-font-size:14px;
-color:#aaa;
+font-size:12px;
+letter-spacing:.5px;
+text-transform:uppercase;
+color:#9c8fae;
 margin-bottom:6px;
 }
 
 .box span{
 font-size:22px;
 font-weight:bold;
+color:#e9d9b8;
 }
 
+/* ---------- Tarjetas "de papel" con esquina doblada y oro asomando ---------- */
+
 .card{
-background:#15151d;
-border-radius:18px;
-padding:18px;
+position:relative;
+background:#f3e8d7;
+color:#2a1f26;
+border-radius:2px 16px 16px 16px;
+padding:28px 22px 22px 22px;
 margin-bottom:18px;
-border:1px solid #23232f;
+box-shadow:0 10px 24px rgba(0,0,0,.35);
+}
+
+.card::before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:0;
+height:0;
+border-style:solid;
+border-width:24px 24px 0 0;
+border-color:#1b1420 transparent transparent transparent;
+z-index:1;
+border-top-left-radius:2px;
+}
+
+.card::after{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:0;
+height:0;
+border-style:solid;
+border-width:17px 17px 0 0;
+border-color:#c69a4a transparent transparent transparent;
+z-index:2;
 }
 
 .method{
 display:inline-block;
-background:#00d26a;
+background:#2a1f26;
+color:#f3e8d7;
 padding:5px 12px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
+border-radius:6px;
+font-family:'JetBrains Mono',monospace;
+font-size:11px;
+font-weight:600;
+letter-spacing:.5px;
 margin-bottom:12px;
-color:#000;
+transform:rotate(-2deg);
 }
 
 .path{
 font-family:'JetBrains Mono',monospace;
-font-size:16px;
+font-size:15px;
 word-break:break-all;
 margin-bottom:8px;
+color:#2a1f26;
 }
 
 .desc{
-color:#9c9c9c;
+color:#7c6a55;
 margin-bottom:15px;
+font-size:14px;
 }
 
 input{
 width:100%;
-padding:14px;
-border:none;
+padding:13px 14px;
+border:1px solid #cbb488;
 outline:none;
-border-radius:12px;
-background:#101015;
-color:white;
+border-radius:8px;
+background:#e7d8bf;
+color:#2a1f26;
 margin-bottom:15px;
 font-size:15px;
+font-family:'Zen Kaku Gothic New',sans-serif;
+}
+
+input::placeholder{
+color:#8a7a63;
+}
+
+input:focus{
+border-color:#c69a4a;
 }
 
 .buttons{
@@ -116,27 +202,33 @@ gap:10px;
 
 button{
 flex:1;
-padding:14px;
+padding:13px;
 border:none;
-border-radius:12px;
+border-radius:8px;
 cursor:pointer;
-font-weight:bold;
-font-size:15px;
-transition:.2s;
+font-weight:700;
+font-size:14px;
+transition:.15s ease;
+font-family:'Zen Kaku Gothic New',sans-serif;
 }
 
 button:hover{
-transform:scale(.98);
+transform:translateY(-1px);
 }
 
 .test{
-background:#ff9ecb;
-color:black;
+background:#c69a4a;
+color:#1b1420;
+}
+
+.test:hover{
+background:#cf8298;
 }
 
 .copy{
-background:#2b2b37;
-color:white;
+background:transparent;
+color:#2a1f26;
+border:1px solid #8a6c37 !important;
 }
 
 .result{
@@ -144,12 +236,14 @@ margin-top:25px;
 }
 
 pre{
-background:#111116;
+background:#241a29;
+color:#ece1d2;
 padding:16px;
-border-radius:14px;
+border-radius:10px;
+border:1px solid #382a3f;
 overflow:auto;
 font-family:'JetBrains Mono',monospace;
-font-size:14px;
+font-size:13px;
 white-space:pre-wrap;
 word-break:break-word;
 }
@@ -157,8 +251,13 @@ word-break:break-word;
 .copyJson{
 margin-top:12px;
 width:100%;
-background:#8a4dff;
-color:white;
+background:transparent;
+color:#e9d9b8;
+border:1px solid #8a6c37;
+}
+
+.copyJson:hover{
+background:#241a29;
 }
 
 .toast{
@@ -166,11 +265,14 @@ position:fixed;
 bottom:20px;
 left:50%;
 transform:translateX(-50%);
-background:#1c1c25;
+background:#f3e8d7;
+color:#2a1f26;
 padding:12px 18px;
-border-radius:10px;
+border-radius:8px;
+border:1px solid #c69a4a;
 display:none;
 z-index:999;
+font-size:14px;
 }
 
 /* ---------- Barra superior + menú hamburguesa ---------- */
@@ -183,18 +285,18 @@ display:flex;
 align-items:center;
 gap:14px;
 padding:16px 20px;
-background:#0b0b0f;
-border-bottom:1px solid #1c1c25;
+background:#241a29;
+border-bottom:1px solid #382a3f;
 }
 
 .hamburger{
 flex:none;
-width:42px;
-height:42px;
+width:40px;
+height:40px;
 padding:0;
-background:#15151d;
-border:1px solid #23232f;
-border-radius:10px;
+background:#1b1420;
+border:1px solid #382a3f;
+border-radius:8px;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -204,24 +306,24 @@ gap:5px;
 
 .hamburger span{
 display:block;
-width:20px;
+width:18px;
 height:2px;
-background:#fff;
+background:#dcb567;
 border-radius:2px;
 }
 
 .brand{
-font-weight:700;
+font-family:'Shippori Mincho',serif;
+font-weight:600;
 font-size:18px;
-background:linear-gradient(90deg,#ff9ecb,#9d4dff);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+color:#dcb567;
+letter-spacing:.5px;
 }
 
 .overlay{
 position:fixed;
 inset:0;
-background:rgba(0,0,0,.55);
+background:rgba(0,0,0,.6);
 display:none;
 z-index:150;
 }
@@ -236,8 +338,8 @@ top:0;
 left:0;
 height:100%;
 width:250px;
-background:#101015;
-border-right:1px solid #23232f;
+background:#241a29;
+border-right:1px solid #382a3f;
 transform:translateX(-100%);
 transition:transform .25s ease;
 z-index:200;
@@ -249,8 +351,8 @@ transform:translateX(0);
 }
 
 .sidemenu-title{
-color:#777;
-font-size:12px;
+color:#7c6a86;
+font-size:11px;
 text-transform:uppercase;
 letter-spacing:1px;
 margin-bottom:16px;
@@ -258,18 +360,21 @@ margin-bottom:16px;
 
 .menu-link{
 display:block;
-padding:12px 14px;
+padding:11px 14px;
 margin-bottom:8px;
-border-radius:10px;
-color:#ddd;
+border-radius:6px;
+color:#c9bcd6;
 text-decoration:none;
 font-weight:600;
-background:#15151d;
+font-size:14px;
+background:#1b1420;
+border-left:3px solid transparent;
 }
 
 .menu-link.active{
-background:linear-gradient(90deg,#ff9ecb,#9d4dff);
-color:#000;
+background:#f3e8d7;
+color:#2a1f26;
+border-left:3px solid #c69a4a;
 }
 
 /* ---------- Tarjetas de categoría (página de inicio) ---------- */
@@ -282,26 +387,55 @@ margin-top:10px;
 }
 
 .catCard{
-background:#15151d;
-border:1px solid #23232f;
-border-radius:16px;
-padding:20px;
+position:relative;
+background:#f3e8d7;
+border-radius:2px 16px 16px 16px;
+padding:22px 18px 18px 18px;
 text-decoration:none;
-color:#fff;
+color:#2a1f26;
+box-shadow:0 8px 20px rgba(0,0,0,.3);
+}
+
+.catCard::before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:0;
+height:0;
+border-style:solid;
+border-width:20px 20px 0 0;
+border-color:#1b1420 transparent transparent transparent;
+z-index:1;
+}
+
+.catCard::after{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:0;
+height:0;
+border-style:solid;
+border-width:14px 14px 0 0;
+border-color:#c69a4a transparent transparent transparent;
+z-index:2;
 }
 
 .catCard h3{
+font-family:'Shippori Mincho',serif;
 font-size:18px;
 margin-bottom:6px;
+color:#2a1f26;
 }
 
 .catCard p{
-color:#9c9c9c;
+color:#7c6a55;
 font-size:13px;
 }
 
 .empty{
-color:#9c9c9c;
+color:#9c8fae;
 text-align:center;
 padding:40px 20px;
 }
