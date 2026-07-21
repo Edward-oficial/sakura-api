@@ -1,6 +1,5 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 const { findUser, readUsers, writeUsers } = require('../../utils/users');
@@ -54,14 +53,6 @@ router.post('/', async (req, res) => {
             });
         }
 
-        if (!process.env.JWT_SECRET) {
-            return res.status(500).json({
-                status: false,
-                creator: 'Edward',
-                error: 'Falta JWT_SECRET en el .env del servidor'
-            });
-        }
-
         // Auto-migración: si esta cuenta se creó antes de tener API keys, se la asignamos ahora
         if (!user.apiKey) {
             const users = readUsers();
@@ -81,16 +72,15 @@ router.post('/', async (req, res) => {
             user.requestsLimit = target.requestsLimit;
         }
 
-        const token = jwt.sign(
-            { username: user.username },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        );
+        // La sesión es lo que da acceso a las páginas (login forzoso)
+        req.session.user = {
+            username: user.username,
+            apiKey: user.apiKey
+        };
 
         res.json({
             status: true,
             creator: 'Edward',
-            token,
             apiKey: user.apiKey,
             requestsUsed: user.requestsUsed || 0,
             requestsLimit: user.unlimited ? null : (user.requestsLimit || REQUESTS_LIMIT),

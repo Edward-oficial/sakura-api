@@ -60,6 +60,12 @@ router.post('/', async (req, res) => {
 
         writeUsers(users);
 
+        // Login forzoso: al registrarse ya queda la sesión abierta
+        req.session.user = {
+            username: newUser.username,
+            apiKey: newUser.apiKey
+        };
+
         res.json({
             status: true,
             creator: 'Edward',
