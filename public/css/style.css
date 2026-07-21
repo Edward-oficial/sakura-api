@@ -55,7 +55,7 @@ display:block;
 width:120px;
 height:2px;
 margin:16px auto 0;
-background:linear-gradient(90deg,transparent,#c69a4a 20%,#c69a4a 45%,#c69a4a 55%,#c69a4a 80%,transparent);
+background:linear-gradient(90deg,transparent,#c69a4a 20%,#c69a4a 45%,transparent 47%,transparent 53%,#c69a4a 55%,#c69a4a 80%,transparent);
 }
 
 h2{
