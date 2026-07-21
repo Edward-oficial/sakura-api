@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 // TODO: Configura tu HCAPTCHA_SECRET en .env
-// const HCAPTCHA_SECRET = process.env.HCAPTCHA_SECRET;
-const HCAPTCHA_SECRET = ''; // Reemplaza con tu secret real de hCaptcha
+// const HCAPTCHA_SECRET = process.env.HCAPTCHA_SECRET || '';
+const HCAPTCHA_SECRET = ''; // Reemplaza con tu clave real
 
 async function verifyCaptcha(token) {
     if (!token || !HCAPTCHA_SECRET) return false;
