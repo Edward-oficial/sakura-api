@@ -6,6 +6,7 @@ const cookieSession = require('cookie-session');
 
 const loadRoutes = require('./utils/loadRoutes');
 const requireSession = require('./middleware/requireSession');
+const requireAdmin = require('./middleware/requireAdmin');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -54,6 +55,10 @@ app.get('/search', requireSession, (req, res) => {
 
 app.get('/profile', requireSession, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
+app.get('/admin', requireAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // Monta automáticamente todo lo que haya en /endpoints
