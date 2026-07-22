@@ -54,13 +54,11 @@ Categoría| Endpoint| Descripción
 
 👥 Créditos
 
-<div align="center">  Creadores
-
-Desarrollador   Edward
-Desarrolladora  Matterssmith
-Desarrollador	   AmilcarGit
-Desarrollador	   Night Vibe
-
+<div align="center">Rol| Nombre
+Creador / Desarrollador| Duan Edward
+Colaborador| Matterssmith
+Colaborador| AmilcarGit
+Colaborador| Night Vibe
 
 </div>---
 
