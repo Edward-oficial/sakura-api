@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
         if (!username || !password) {
             return res.status(400).json({
                 status: false,
-                creator: 'Edward',
+                creator: 'Sakura',
                 error: 'Faltan username o password'
             });
         }
