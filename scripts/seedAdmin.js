@@ -11,6 +11,8 @@ async function seedAdmin() {
 
     console.log('Creando cuenta admin en Supabase Auth...');
 
+    let authUser;
+
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: ADMIN_EMAIL,
         password: ADMIN_PASSWORD,
@@ -18,8 +20,34 @@ async function seedAdmin() {
     });
 
     if (authError) {
-        console.error('Error creando el usuario en Auth:', authError.message);
-        process.exit(1);
+
+        const yaExiste = /already.*registered|already.*exists/i.test(authError.message);
+
+        if (!yaExiste) {
+            console.error('Error creando el usuario en Auth:', authError.message);
+            process.exit(1);
+        }
+
+        console.log('Ya existía en Auth, reutilizando esa cuenta...');
+
+        const { data: listData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+
+        if (listError) {
+            console.error('Error buscando el usuario existente:', listError.message);
+            process.exit(1);
+        }
+
+        authUser = listData.users.find(u => u.email === ADMIN_EMAIL);
+
+        if (!authUser) {
+            console.error('No se encontró la cuenta existente en Auth');
+            process.exit(1);
+        }
+
+    } else {
+
+        authUser = authData.user;
+
     }
 
     const apiKey = await generateApiKey();
@@ -27,7 +55,7 @@ async function seedAdmin() {
     const { data: userRow, error: insertError } = await supabaseAdmin
         .from('users')
         .insert({
-            id: authData.user.id,
+            id: authUser.id,
             username: ADMIN_EMAIL,
             api_key: apiKey,
             requests_used: 0,
