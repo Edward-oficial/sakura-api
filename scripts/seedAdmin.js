@@ -2,7 +2,7 @@ const supabaseAdmin = require('../utils/supabaseAdmin');
 const generateApiKey = require('../utils/apiKey');
 
 const ADMIN_EMAIL = 'edwardshanti3@gmail.com';
-const ADMIN_PASSWORD = 'edwardshanti3@gmail.com'; // el correo es la contraseña, como pediste
+const ADMIN_PASSWORD = 'edwardshanti3@gmail.com'; 
 
 const REQUESTS_LIMIT = 1000;
 const RESET_DAYS = 30;
