@@ -54,6 +54,10 @@ app.get('/search', requireSession, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'search.html'));
 });
 
+app.get('/profile', requireSession, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
 // Monta automáticamente todo lo que haya en /endpoints
 loadRoutes(app, path.join(__dirname, 'endpoints'));
 
