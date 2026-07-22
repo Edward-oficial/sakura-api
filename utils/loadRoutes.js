@@ -3,8 +3,8 @@ const path = require('path');
 
 const apiKeyAuth = require('../middleware/apiKeyAuth');
 
-// Esta categoría NO pide API key (login/registro no pueden pedirla)
-const EXCLUDED_FROM_APIKEY = ['auth'];
+// Estas categorías NO piden API key (usan sesión de login en vez de eso)
+const EXCLUDED_FROM_APIKEY = ['auth', 'profile'];
 
 /**
  * Recorre recursivamente /endpoints y monta cada archivo .js como router.
