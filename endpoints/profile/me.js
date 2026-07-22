@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     if (!req.session || !req.session.user) {
         return res.status(401).json({
             status: false,
-            creator: 'Sakura',
+            creator: 'Edward',
             error: 'No has iniciado sesión'
         });
     }
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     if (!user) {
         return res.status(404).json({
             status: false,
-            creator: 'Sakura',
+            creator: 'Edward',
             error: 'Usuario no encontrado'
         });
     }
@@ -31,7 +31,8 @@ router.get('/', async (req, res) => {
         avatarUrl: user.avatar_url,
         requestsUsed: user.requests_used,
         requestsLimit: user.unlimited ? null : user.requests_limit,
-        unlimited: !!user.unlimited
+        unlimited: !!user.unlimited,
+        isAdmin: !!user.is_admin
     });
 
 });
