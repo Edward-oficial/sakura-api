@@ -38,6 +38,7 @@ async function run(path){
         json.textContent = "Error al obtener datos.";
 
     }
+
 }
 
 function copyEndpoint(btn){
@@ -50,14 +51,19 @@ function copyEndpoint(btn){
     navigator.clipboard.writeText(location.origin + pathEl.textContent.trim());
 
     toast();
+
 }
 
 function copyJson(){
+
     navigator.clipboard.writeText(last);
+
     toast();
+
 }
 
 function copyApiKey(){
+
     const key = localStorage.getItem("apiKey");
 
     if(!key){
@@ -66,27 +72,60 @@ function copyApiKey(){
     }
 
     navigator.clipboard.writeText(key);
+
     toast();
+
 }
 
 function logout(){
+
     localStorage.removeItem("apiKey");
+
     window.location.href = "/logout";
+
 }
 
 function toast(){
+
     const t = document.getElementById("toast");
+
     t.style.display = "block";
+
     setTimeout(() => {
+
         t.style.display = "none";
+
     }, 1800);
+
 }
 
 function refreshApiKeyInPaths(){
+
     const apiKey = localStorage.getItem("apiKey") || "TU_API_KEY";
+
     document.querySelectorAll(".path[data-endpoint]").forEach(function(el){
         el.textContent = el.getAttribute("data-endpoint").replace("TU_API_KEY", apiKey);
     });
+
+}
+
+async function applyAdminVisibility(){
+
+    try{
+
+        const res = await fetch('/profile/me');
+        const data = await res.json();
+
+        if(data.status && data.isAdmin){
+            document.querySelectorAll(".admin-only").forEach(function(el){
+                el.style.display = "";
+            });
+        }
+
+    }catch{
+        // si falla, simplemente se queda oculto
+    }
+
 }
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -94,13 +133,17 @@ document.addEventListener("DOMContentLoaded", function(){
     const input = document.getElementById("apiKeyInput");
 
     if(input){
+
         input.value = localStorage.getItem("apiKey") || "";
+
         input.addEventListener("input", function(){
             localStorage.setItem("apiKey", input.value.trim());
             refreshApiKeyInPaths();
         });
+
     }
 
     refreshApiKeyInPaths();
+    applyAdminVisibility();
 
 });
