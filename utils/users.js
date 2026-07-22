@@ -1,25 +1,74 @@
-const fs = require('fs');
-const path = require('path');
+const supabase = require('./supabaseClient');
 
-const DB_PATH = path.join(__dirname, '..', 'data', 'users.json');
+async function findUser(username) {
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .ilike('username', username)
+        .maybeSingle();
 
-function readUsers() {
-    try {
-        const raw = fs.readFileSync(DB_PATH, 'utf-8');
-        return JSON.parse(raw || '[]');
-    } catch (err) {
-        return [];
+    if (error) {
+        console.error('[users] findUser:', error.message);
+        return null;
     }
+
+    return data;
 }
 
-function writeUsers(users) {
-    fs.writeFileSync(DB_PATH, JSON.stringify(users, null, 2));
+async function findUserByApiKey(apiKey) {
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('api_key', apiKey)
+        .maybeSingle();
+
+    if (error) {
+        console.error('[users] findUserByApiKey:', error.message);
+        return null;
+    }
+
+    return data;
 }
 
-function findUser(username) {
-    return readUsers().find(
-        u => u.username.toLowerCase() === String(username).toLowerCase()
-    );
+async function apiKeyExists(apiKey) {
+    const { data } = await supabase
+        .from('users')
+        .select('id')
+        .eq('api_key', apiKey)
+        .maybeSingle();
+
+    return !!data;
 }
 
-module.exports = { readUsers, writeUsers, findUser };
+async function createUser(user) {
+    const { data, error } = await supabase
+        .from('users')
+        .insert(user)
+        .select()
+        .single();
+
+    if (error) throw new Error(error.message);
+
+    return data;
+}
+
+async function updateUser(username, changes) {
+    const { data, error } = await supabase
+        .from('users')
+        .update(changes)
+        .ilike('username', username)
+        .select()
+        .single();
+
+    if (error) throw new Error(error.message);
+
+    return data;
+}
+
+module.exports = {
+    findUser,
+    findUserByApiKey,
+    apiKeyExists,
+    createUser,
+    updateUser
+};
