@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
             return res.status(401).json({
                 status: false,
                 creator: 'Sakura',
-                error: 'Usuario o contraseña incorrectos'
+                error: authError ? authError.message : 'Usuario o contraseña incorrectos'
             });
         }
 
