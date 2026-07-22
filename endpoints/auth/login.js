@@ -56,7 +56,8 @@ router.post('/', async (req, res) => {
         req.session.user = {
             username: user.username,
             apiKey: user.api_key,
-            avatarUrl: user.avatar_url
+            avatarUrl: user.avatar_url,
+            isAdmin: !!user.is_admin
         };
 
         res.json({
@@ -66,7 +67,8 @@ router.post('/', async (req, res) => {
             requestsUsed: user.requests_used || 0,
             requestsLimit: user.unlimited ? null : user.requests_limit,
             unlimited: !!user.unlimited,
-            avatarUrl: user.avatar_url
+            avatarUrl: user.avatar_url,
+            isAdmin: !!user.is_admin
         });
 
     } catch (err) {
