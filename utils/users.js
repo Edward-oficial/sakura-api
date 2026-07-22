@@ -1,7 +1,7 @@
-const supabase = require('./supabaseClient');
+const supabaseAdmin = require('./supabaseAdmin');
 
 async function findUser(username) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
         .from('users')
         .select('*')
         .ilike('username', username)
@@ -15,8 +15,23 @@ async function findUser(username) {
     return data;
 }
 
+async function findUserById(id) {
+    const { data, error } = await supabaseAdmin
+        .from('users')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+
+    if (error) {
+        console.error('[users] findUserById:', error.message);
+        return null;
+    }
+
+    return data;
+}
+
 async function findUserByApiKey(apiKey) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
         .from('users')
         .select('*')
         .eq('api_key', apiKey)
@@ -31,7 +46,7 @@ async function findUserByApiKey(apiKey) {
 }
 
 async function apiKeyExists(apiKey) {
-    const { data } = await supabase
+    const { data } = await supabaseAdmin
         .from('users')
         .select('id')
         .eq('api_key', apiKey)
@@ -41,7 +56,7 @@ async function apiKeyExists(apiKey) {
 }
 
 async function createUser(user) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
         .from('users')
         .insert(user)
         .select()
@@ -53,7 +68,7 @@ async function createUser(user) {
 }
 
 async function updateUser(username, changes) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
         .from('users')
         .update(changes)
         .ilike('username', username)
@@ -67,6 +82,7 @@ async function updateUser(username, changes) {
 
 module.exports = {
     findUser,
+    findUserById,
     findUserByApiKey,
     apiKeyExists,
     createUser,
