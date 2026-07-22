@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
 
-const { readUsers, writeUsers, findUser } = require('../../utils/users');
+const { findUser, createUser } = require('../../utils/users');
 const verifyCaptcha = require('../../utils/verifyCaptcha');
 const generateApiKey = require('../../utils/apiKey');
 
@@ -28,57 +28,56 @@ router.post('/', async (req, res) => {
         if (!captchaOk) {
             return res.status(400).json({
                 status: false,
-                creator: 'Edward',
+                creator: 'Sakura',
                 error: 'Captcha inválido'
             });
         }
 
-        if (findUser(username)) {
+        const existing = await findUser(username);
+
+        if (existing) {
             return res.status(409).json({
                 status: false,
-                creator: 'Edward',
+                creator: 'Sakura',
                 error: 'Ese usuario ya existe'
             });
         }
 
         const hash = await bcrypt.hash(password, 10);
+        const apiKey = await generateApiKey();
 
-        const users = readUsers();
-
-        const newUser = {
+        const newUser = await createUser({
             username,
             password: hash,
-            apiKey: generateApiKey(),
-            requestsUsed: 0,
-            requestsLimit: REQUESTS_LIMIT,
-            resetAt: new Date(Date.now() + RESET_DAYS * 24 * 60 * 60 * 1000).toISOString(),
-            unlimited: false,
-            createdAt: new Date().toISOString()
-        };
-
-        users.push(newUser);
-
-        writeUsers(users);
+            api_key: apiKey,
+            requests_used: 0,
+            requests_limit: REQUESTS_LIMIT,
+            reset_at: new Date(Date.now() + RESET_DAYS * 24 * 60 * 60 * 1000).toISOString(),
+            unlimited: false
+            // avatar_url no se manda: Supabase le pone la sakura por defecto sola
+        });
 
         // Login forzoso: al registrarse ya queda la sesión abierta
         req.session.user = {
             username: newUser.username,
-            apiKey: newUser.apiKey
+            apiKey: newUser.api_key,
+            avatarUrl: newUser.avatar_url
         };
 
         res.json({
             status: true,
-            creator: 'Edward',
+            creator: 'Sakura',
             message: 'Usuario registrado correctamente',
-            apiKey: newUser.apiKey,
-            requestsLimit: newUser.requestsLimit
+            apiKey: newUser.api_key,
+            requestsLimit: newUser.requests_limit,
+            avatarUrl: newUser.avatar_url
         });
 
     } catch (err) {
 
         res.status(500).json({
             status: false,
-            creator: 'Edward',
+            creator: 'Sakura',
             error: err.message
         });
 
