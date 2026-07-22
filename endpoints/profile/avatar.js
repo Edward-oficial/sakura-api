@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 
-const supabase = require('../../utils/supabaseClient');
+const supabaseAdmin = require('../../utils/supabaseAdmin');
 const { updateUser } = require('../../utils/users');
 
 const upload = multer({
@@ -34,7 +34,7 @@ router.post('/', upload.single('avatar'), async (req, res) => {
         const ext = (req.file.originalname.split('.').pop() || 'jpg').toLowerCase();
         const fileName = `${username}-${Date.now()}.${ext}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabaseAdmin.storage
             .from('avatars')
             .upload(fileName, req.file.buffer, {
                 contentType: req.file.mimetype,
@@ -49,7 +49,7 @@ router.post('/', upload.single('avatar'), async (req, res) => {
             });
         }
 
-        const { data: publicUrlData } = supabase.storage
+        const { data: publicUrlData } = supabaseAdmin.storage
             .from('avatars')
             .getPublicUrl(fileName);
 
