@@ -1,13 +1,9 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const router = express.Router();
 
-const { findUser, updateUser } = require('../../utils/users');
+const supabaseAuth = require('../../utils/supabaseClient');
+const { findUserById } = require('../../utils/users');
 const verifyCaptcha = require('../../utils/verifyCaptcha');
-const generateApiKey = require('../../utils/apiKey');
-
-const REQUESTS_LIMIT = 1000;
-const RESET_DAYS = 30;
 
 router.post('/', async (req, res) => {
 
@@ -33,37 +29,26 @@ router.post('/', async (req, res) => {
             });
         }
 
-        let user = await findUser(username);
+        const { data: authData, error: authError } = await supabaseAuth.auth.signInWithPassword({
+            email: username,
+            password
+        });
+
+        if (authError || !authData.user) {
+            return res.status(401).json({
+                status: false,
+                creator: 'Sakura',
+                error: 'Usuario o contraseña incorrectos'
+            });
+        }
+
+        const user = await findUserById(authData.user.id);
 
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 status: false,
                 creator: 'Sakura',
-                error: 'Usuario o contraseña incorrectos'
-            });
-        }
-
-        const match = await bcrypt.compare(password, user.password);
-
-        if (!match) {
-            return res.status(401).json({
-                status: false,
-                creator: 'Sakura',
-                error: 'Usuario o contraseña incorrectos'
-            });
-        }
-
-        // Auto-migración: si esta cuenta se creó antes de tener API keys, se la asignamos ahora
-        if (!user.api_key) {
-            const apiKey = await generateApiKey();
-
-            user = await updateUser(user.username, {
-                api_key: apiKey,
-                requests_used: user.requests_used || 0,
-                requests_limit: user.requests_limit || REQUESTS_LIMIT,
-                reset_at:
-                    user.reset_at ||
-                    new Date(Date.now() + RESET_DAYS * 24 * 60 * 60 * 1000).toISOString()
+                error: 'Tu cuenta existe en Auth pero no tiene fila en la tabla users'
             });
         }
 
@@ -79,7 +64,7 @@ router.post('/', async (req, res) => {
             creator: 'Sakura',
             apiKey: user.api_key,
             requestsUsed: user.requests_used || 0,
-            requestsLimit: user.unlimited ? null : (user.requests_limit || REQUESTS_LIMIT),
+            requestsLimit: user.unlimited ? null : user.requests_limit,
             unlimited: !!user.unlimited,
             avatarUrl: user.avatar_url
         });
