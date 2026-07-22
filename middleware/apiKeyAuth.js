@@ -12,7 +12,7 @@ async function apiKeyAuth(req, res, next) {
         if (!apiKey) {
             return res.status(401).json({
                 status: false,
-                creator: 'Edward',
+                creator: 'Sakura',
                 error: 'Falta la API key. Agrega ?apikey=TU_API_KEY a la petición'
             });
         }
@@ -22,7 +22,7 @@ async function apiKeyAuth(req, res, next) {
         if (!user) {
             return res.status(401).json({
                 status: false,
-                creator: 'Edward',
+                creator: 'Sskura',
                 error: 'API key inválida'
             });
         }
@@ -52,7 +52,7 @@ async function apiKeyAuth(req, res, next) {
 
             return res.status(429).json({
                 status: false,
-                creator: 'Edward',
+                creator: 'Sakura',
                 error: 'Alcanzaste el límite de solicitudes de tu API key este mes',
                 requestsUsed,
                 requestsLimit: limit,
@@ -79,7 +79,7 @@ async function apiKeyAuth(req, res, next) {
 
         res.status(500).json({
             status: false,
-            creator: 'Edward',
+            creator: 'Sakura',
             error: err.message
         });
 
