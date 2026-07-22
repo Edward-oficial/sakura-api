@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 
 const loadRoutes = require('./utils/loadRoutes');
 const requireSession = require('./middleware/requireSession');
@@ -13,13 +13,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'cambia_esto_por_algo_secreto',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
-    }
+app.use(cookieSession({
+    name: 'session',
+    keys: [process.env.SESSION_SECRET || 'cambia_esto_por_algo_secreto'],
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
 }));
 
 // Solo css/js son públicos sin sesión (login/register los necesitan para verse bien)
@@ -38,7 +35,8 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    req.session.destroy(() => res.redirect('/login'));
+    req.session = null;
+    res.redirect('/login');
 });
 
 // Login/registro forzoso: sin sesión no se puede ver ninguna página de contenido
