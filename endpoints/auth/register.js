@@ -1,7 +1,7 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const router = express.Router();
 
+const supabaseAuth = require('../../utils/supabaseClient');
 const { findUser, createUser } = require('../../utils/users');
 const verifyCaptcha = require('../../utils/verifyCaptcha');
 const generateApiKey = require('../../utils/apiKey');
@@ -43,19 +43,51 @@ router.post('/', async (req, res) => {
             });
         }
 
-        const hash = await bcrypt.hash(password, 10);
+        // "username" tiene que ser un correo real: Supabase Auth lo exige
+        const { data: authData, error: authError } = await supabaseAuth.auth.signUp({
+            email: username,
+            password
+        });
+
+        if (authError) {
+            return res.status(400).json({
+                status: false,
+                creator: 'Sakura',
+                error: authError.message
+            });
+        }
+
+        const authUser = authData.user;
+
+        if (!authUser) {
+            return res.status(500).json({
+                status: false,
+                creator: 'Sakura',
+                error: 'No se pudo crear la cuenta en Supabase Auth'
+            });
+        }
+
         const apiKey = await generateApiKey();
 
         const newUser = await createUser({
+            id: authUser.id,
             username,
-            password: hash,
             api_key: apiKey,
             requests_used: 0,
             requests_limit: REQUESTS_LIMIT,
             reset_at: new Date(Date.now() + RESET_DAYS * 24 * 60 * 60 * 1000).toISOString(),
             unlimited: false
-            // avatar_url no se manda: Supabase le pone la sakura por defecto sola
         });
+
+        // Si el proyecto pide confirmar el correo, Supabase no abre sesión todavía
+        if (!authData.session) {
+            return res.json({
+                status: true,
+                creator: 'Sakura',
+                message: 'Cuenta creada. Revisa tu correo para confirmarla antes de iniciar sesión.',
+                apiKey: newUser.api_key
+            });
+        }
 
         // Login forzoso: al registrarse ya queda la sesión abierta
         req.session.user = {
